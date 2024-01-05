@@ -104,13 +104,9 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         supportingFiles
                 .add(new SupportingFile("apis.mustache", apiPackage().replace('.', '/'), "api.ts"));
         supportingFiles.add(new SupportingFile("index.mustache", getIndexDirectory(), "index.ts"));
-        supportingFiles.add(new SupportingFile("api.module.mustache", getIndexDirectory(), "api.module.ts"));
         supportingFiles.add(new SupportingFile("configuration.mustache", getIndexDirectory(), "configuration.ts"));
         supportingFiles.add(new SupportingFile("variables.mustache", getIndexDirectory(), "variables.ts"));
         supportingFiles.add(new SupportingFile("encoder.mustache", getIndexDirectory(), "encoder.ts"));
-        supportingFiles.add(new SupportingFile("gitignore", "", ".gitignore"));
-        supportingFiles.add(new SupportingFile("npmignore", "", ".npmignore"));
-        supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
 
         SemVer ngVersion = determineNgVersion();
 
@@ -148,15 +144,7 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
             additionalProperties.put("genericModuleWithProviders", true);
         }
 
-        // for Angular 2 AOT support we will use good-old ngc,
-        // Angular Package format wasn't invented at this time and building was much more easier
-        if (!ngVersion.atLeast("4.0.0")) {
-            LOGGER.warn("Please update your legacy Angular " + ngVersion + " project to benefit from 'Angular Package Format' support.");
-            additionalProperties.put("useNgPackagr", false);
-        } else {
-            additionalProperties.put("useNgPackagr", true);
-            supportingFiles.add(new SupportingFile("ng-package.mustache", getIndexDirectory(), "ng-package.json"));
-        }
+        
 
         // Libraries generated with v1.x of ng-packagr will ship with AoT metadata in v3, which is intended for Angular v4.
         // Libraries generated with v2.x of ng-packagr will ship with AoT metadata in v4, which is intended for Angular v5 (and Angular v6).
@@ -293,14 +281,8 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         }
 
         //Files for building our lib
-        supportingFiles.add(new SupportingFile("README.mustache", getIndexDirectory(), "README.md"));
-        supportingFiles.add(new SupportingFile("package.mustache", getIndexDirectory(), "package.json"));
         supportingFiles.add(new SupportingFile("typings.mustache", getIndexDirectory(), "typings.json"));
         supportingFiles.add(new SupportingFile("tsconfig.mustache", getIndexDirectory(), "tsconfig.json"));
-        if (additionalProperties.containsKey(NG_PACKAGR)
-            && Boolean.valueOf(additionalProperties.get(NG_PACKAGR).toString())) {
-            supportingFiles.add(new SupportingFile("ng-package.mustache", getIndexDirectory(), "ng-package.json"));
-        }
     }
 
     private String getIndexDirectory() {
